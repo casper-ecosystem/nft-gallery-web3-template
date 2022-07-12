@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  middleware:
+    container_name: barebone_middleware
+    build:
+      context: .
+      dockerfile: ./middleware/Dockerfile
+    environment:
+      - MIDDLEWARE_PORT
+      - MONGO_URL
+      - MONGO_DB_NAME
+      - MONGO_USERNAME
+      - MONGO_PASSWORD
+      - CHAIN_RPC_URL
+      - CHAIN_NET_NAME
+      - CHAIN_EE_URL
+      - CHAIN_CONTRACT_ADDR
+      - CHAIN_CONTRACT_PACKAGE_ADDR
+      - CHAIN_PRIV_KEY_VARIANT
+      - CHAIN_PRIV_KEY_BASE64
+    ports:
+        - 4000:4000
+    networks:
+        - server-network
+    volumes:
+      - ./middleware:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+
+  frontend:
+    container_name: barebone_frontend
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
+      args:
+        - REACT_APP_MIDDLEWARE_URL=${MIDDLEWARE_URL}
+        - REACT_APP_MIDDLEWARE_PORT=${MIDDLEWARE_PORT}
+        - REACT_APP_TOTAL_NFTS_NUM=${TOTAL_NFTS_NUM}
+    environment:
+      - REACT_APP_MIDDLEWARE_URL=${MIDDLEWARE_URL}
+      - REACT_APP_MIDDLEWARE_PORT=${MIDDLEWARE_PORT}
+      - REACT_APP_TOTAL_NFTS_NUM=${TOTAL_NFTS_NUM}
+    ports:
+        - 3000:3000
+    volumes:
+      - ./frontend:/usr/src/app
+    restart: unless-stopped
+
+networks:
+    server-network:

@@ -1,0 +1,45 @@
+version: '3.8'
+
+volumes:
+  mongodb_data:
+    driver: local
+
+services:
+  middleware:
+    build:
+      target: base
+    container_name: barebone_middleware_dev
+    command: sh -c "npm install && npm run start:dev"
+    volumes:
+      - /usr/src/app/node_modules
+
+  frontend:
+    container_name: barebone_frontend_dev
+    build:
+      context: .
+      target: base
+      dockerfile: ./frontend/Dockerfile
+    command: sh -c "npm install && npm run start"
+    ports:
+        - 3000:3000
+    volumes:
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+
+  mongodb:
+    container_name: barebone_db_dev
+    image: mongo:4
+    environment:
+      - MONGO_INITDB_DATABASE=${MONGO_DB_NAME}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+        - server-network
+    ports:
+      - "27017-27019:27017-27019"
+    command: mongod --port 27017 --bind_ip_all
+
+networks:
+    server-network:
