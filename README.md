@@ -13,6 +13,9 @@ It is worth mentioning that the current version of middleware assumes that all N
 Frontend allows the end-user to browse through the transferred NFTs and redeem the email/code pair.
 It also connects to Signer to ensure that the user has properly generated private/public keys.
 
+#### Showcase video
+
+https://user-images.githubusercontent.com/59571310/178995875-345601ac-5a5e-4dd6-830a-2ef2f93f6bfb.mov
 
 ## How to run the example
 
